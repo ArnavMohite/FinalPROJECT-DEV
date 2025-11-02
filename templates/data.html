@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+<main class="charts fade-in">
+  <div class="chart-container">
+    <h3>&#128202; Average Ticket Price by Team</h3>
+    <canvas id="barChart"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <h3>&#127967;&#65039; Events by Venue</h3>
+    <canvas id="pieChart"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <h3>&#128197; Ticket Prices Over Time</h3>
+    <canvas id="lineChart"></canvas>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const events = [
+  {team:"USF Bulls",price:30,venue:"USF Stadium"},
+  {team:"Buccaneers",price:80,venue:"Raymond James Stadium"},
+  {team:"Lightning",price:60,venue:"Amalie Arena"},
+  {team:"Rowdies",price:35,venue:"Al Lang Stadium"},
+  {team:"Buccaneers",price:78,venue:"Raymond James Stadium"},
+  {team:"USF Bulls",price:45,venue:"Raymond James Stadium"},
+  {team:"USF Volleyball",price:22,venue:"Yuengling Center"},
+  {team:"Lightning",price:62,venue:"Amalie Arena"},
+  {team:"Rowdies",price:36,venue:"Al Lang Stadium"},
+  {team:"USF Basketball",price:27,venue:"Yuengling Center"},
+  {team:"Buccaneers",price:82,venue:"Raymond James Stadium"},
+  {team:"Lightning",price:70,venue:"Amalie Arena"},
+  {team:"Rowdies",price:38,venue:"Al Lang Stadium"},
+  {team:"Lightning",price:65,venue:"Amalie Arena"},
+  {team:"USF Football",price:45,venue:"Raymond James Stadium"},
+  {team:"Rowdies",price:40,venue:"Al Lang Stadium"},
+  {team:"Buccaneers",price:90,venue:"Raymond James Stadium"},
+  {team:"Lightning",price:55,venue:"Amalie Arena"}
+];
+
+// Bar Chart
+const avg={};events.forEach(e=>{avg[e.team]=avg[e.team]||[];avg[e.team].push(e.price);});
+const teams=Object.keys(avg);
+const avgs=teams.map(t=>avg[t].reduce((a,b)=>a+b)/avg[t].length);
+new Chart(barChart,{
+  type:"bar",
+  data:{labels:teams,datasets:[{label:"Avg Price ($)",data:avgs,
+  backgroundColor:["#006747","#b21e1e","#0060d0","#009b3a","#777"]}]},
+  options:{scales:{y:{beginAtZero:true}}}
+});
+
+// Pie Chart
+const venueCount={};events.forEach(e=>venueCount[e.venue]=(venueCount[e.venue]||0)+1);
+new Chart(pieChart,{
+  type:"pie",
+  data:{labels:Object.keys(venueCount),
+  datasets:[{data:Object.values(venueCount),
+  backgroundColor:["#006747","#b21e1e","#0060d0","#009b3a","#444"]}]}
+});
+
+// Line Chart
+new Chart(lineChart,{
+  type:"line",
+  data:{
+    labels:events.map((_,i)=>`Event ${i+1}`),
+    datasets:[{data:events.map(e=>e.price),
+    borderColor:"#006747",backgroundColor:"#b2d8c2",tension:.3,fill:false}]
+  },
+  options:{plugins:{legend:{display:false}}}
+});
+</script>
+{% endblock %}

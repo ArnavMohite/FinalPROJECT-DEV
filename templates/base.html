@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🏡 EventXpert | Tampa Bay Sports Hub</title>
+
+  <!-- Correct Flask CSS link -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <!-- Botpress Chat Bubble -->
+  <script src="https://cdn.botpress.cloud/webchat/v3.3/inject.js" defer></script>
+  <script src="https://files.bpcontent.cloud/2025/10/19/18/20251019182617-TNXHR4Z3.js" defer></script>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="brand">🏡 EventXpert</div>
+    <nav class="nav">
+      <a href="{{ url_for('index') }}">Home</a>
+      <a href="{{ url_for('api_page') }}">Live Sports API</a>
+      <a href="{{ url_for('add_event') }}">Manage Events</a>
+      <a href="{{ url_for('about') }}">About Us</a>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2025 EventXpert • ISM6225 | University of South Florida</p>
+  </footer>
+
+  <!-- Scroll-to-top button -->
+  <button id="topBtn">&#8593;</button>
+  <script>
+    const btn = document.getElementById("topBtn");
+    window.onscroll = () => { btn.style.display = (window.scrollY > 250) ? "block" : "none"; };
+    btn.onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  </script>
+</body>
+</html>

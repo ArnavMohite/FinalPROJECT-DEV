@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Hero section -->
+<section class="hero fade-in">
+  <h1>Tampa Bay Sports Events & Tickets</h1>
+  <p>Your single hub for USF Bulls, Buccaneers, Lightning & Rowdies updates.</p>
+</section>
+
+<!-- Logo Carousel -->
+<section class="logos-section fade-in">
+  <h2 class="section-title">Featured Teams</h2>
+  <div class="logo-carousel">
+    <div class="logo-track">
+  <!-- First loop -->
+  <div class="logo-item"><img src="{{ url_for('static', filename='img/usf.png') }}" alt="USF Bulls"><span>USF Bulls</span></div>
+  <div class="logo-item"><img src="{{ url_for('static', filename='img/bucs.png') }}" alt="Buccaneers"><span>Buccaneers</span></div>
+  <div class="logo-item"><img src="{{ url_for('static', filename='img/lightning.png') }}" alt="Lightning"><span>Lightning</span></div>
+  <div class="logo-item"><img src="{{ url_for('static', filename='img/rowdies.png') }}" alt="Rowdies"><span>Rowdies</span></div>
+
+  <!-- Duplicate logos for smooth infinite scroll -->
+  <div class="logo-item"><img src="{{ url_for('static', filename='img/usf.png') }}" alt="USF Bulls"><span>USF Bulls</span></div>
+  <div class="logo-item"><img src="{{ url_for('static', filename='img/bucs.png') }}" alt="Buccaneers"><span>Buccaneers</span></div>
+  <div class="logo-item"><img src="{{ url_for('static', filename='img/lightning.png') }}" alt="Lightning"><span>Lightning</span></div>
+  <div class="logo-item"><img src="{{ url_for('static', filename='img/rowdies.png') }}" alt="Rowdies"><span>Rowdies</span></div>
+</div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features fade-in">
+  <div class="card"><h3>Local Focus</h3><p>Clean schedules and ticket insights for Tampa Bay fans.</p></div>
+  <div class="card"><h3>Smart Assistant</h3><p>Chat with EventXpert for dates, venues and prices instantly.</p></div>
+  <div class="card"><h3>Interactive Charts</h3><p>Visualize trends across teams, venues and ticket ranges.</p></div>
+</section>
+
+<!-- Dynamic Events -->
+<section class="events-preview fade-in">
+  <h2 class="section-title">Upcoming Events (Dynamic)</h2>
+  <p class="events-desc">Explore live Tampa Bay match schedules from your local database.</p>
+
+  <table class="events-table">
+    <thead>
+      <tr>
+        <th>Match</th>
+        <th>Date</th>
+        <th>Venue</th>
+        <th>Price ($)</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in events %}
+      <tr>
+        <td>{{ e.title }}</td>
+        <td>{{ e.date }}</td>
+        <td>{{ e.location }}</td>
+        <td>{{ e.price }}</td>
+        <td>
+          <a href="/edit/{{ e.id }}">Edit</a> |
+          <a href="/delete/{{ e.id }}">Delete</a>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5">No events yet — click “Add New Event” below.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p style="margin-top:20px;text-align:center;">
+    <a href="{{ url_for('add_event') }}" style="color:#006747;font-weight:bold;">➕ Add New Event</a>
+  </p>
+</section>
+
+{% endblock %}

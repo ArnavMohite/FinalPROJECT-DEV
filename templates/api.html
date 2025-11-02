@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="about-container fade-in">
+  <h2>Upcoming Tampa Bay Matches</h2>
+  <p style="text-align:center;color:#555;margin-bottom:20px;">
+    Pulled from EventXpert’s integrated dataset (used by your Botpress chatbot).
+  </p>
+  
+  <div class="team-section">
+    {% for match in data %}
+    <div class="team-card">
+      <h3>{{ match.strEvent }}</h3>
+      <p><strong>Date:</strong> {{ match.dateEvent }}</p>
+      <p><strong>Venue:</strong> {{ match.venue }}</p>
+      <p><strong>Tickets:</strong> {{ match.price }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="about-container">
+  <h2>{% if event %}Edit Event{% else %}Add New Event{% endif %}</h2>
+  <form method="POST" class="crud-container">
+    <label>Title:</label><br>
+    <input name="title" value="{{ event.title if event else '' }}"><br><br>
+
+    <label>Date:</label><br>
+    <input name="date" value="{{ event.date if event else '' }}"><br><br>
+
+    <label>Location:</label><br>
+    <input name="location" value="{{ event.location if event else '' }}"><br><br>
+
+    <label>Price ($):</label><br>
+    <input name="price" value="{{ event.price if event else '' }}"><br><br>
+
+    <button type="submit">Save</button>
+  </form>
+</section>
+{% endblock %}

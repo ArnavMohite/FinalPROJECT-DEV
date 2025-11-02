@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="about-container">
+  <h2>About Our Team - EventXpert</h2>
+  <p><strong>EventXpert</strong> is a Tampa Bay sports event web platform built for ISM6225.</p>
+
+  <div class="team-section">
+    <div class="team-card"><h3>Arnav Mohite</h3><p>Backend & Azure</p></div>
+    <div class="team-card"><h3>Raees Parkar</h3><p>API Integration</p></div>
+    <div class="team-card"><h3>Kajal Sharma</h3><p>Frontend Design</p></div>
+    <div class="team-card"><h3>Kushal Reddy</h3><p>Docs & Presentation</p></div>
+  </div>
+
+  <h2>Data Model (ERD)</h2>
+  <img src="{{ url_for('static', filename='erd.png') }}" width="400">
+</section>
+{% endblock %}
