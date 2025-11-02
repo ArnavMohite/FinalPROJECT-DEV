@@ -1,74 +1,99 @@
-{% extends 'base.html' %}
-{% block content %}
-<main class="charts fade-in">
-  <div class="chart-container">
-    <h3>&#128202; Average Ticket Price by Team</h3>
-    <canvas id="barChart"></canvas>
-  </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📊 EventXpert | Data Visualization</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
 
-  <div class="chart-container">
-    <h3>&#127967;&#65039; Events by Venue</h3>
-    <canvas id="pieChart"></canvas>
-  </div>
+<body>
+  <header class="site-header">
+    <div class="brand">🏠 EventXpert</div>
+    <nav class="nav">
+      <a href="{{ url_for('index') }}">Home</a>
+      <a href="{{ url_for('data_page') }}" class="active">Data Visualization</a>
+      <a href="{{ url_for('index') }}">Manage Events</a>
+      <a href="{{ url_for('api_page') }}">Live Sports API</a>
+      <a href="{{ url_for('about') }}">About Us</a>
+    </nav>
+  </header>
 
-  <div class="chart-container">
-    <h3>&#128197; Ticket Prices Over Time</h3>
-    <canvas id="lineChart"></canvas>
-  </div>
-</main>
+  <main class="charts fade-in" style="max-width:1000px; margin:auto;">
+    <h2 class="section-title">📊 Event Insights Dashboard</h2>
+    <p style="text-align:center;">Visualizing live data from your EventXpert database and default dataset.</p>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-const events = [
-  {team:"USF Bulls",price:30,venue:"USF Stadium"},
-  {team:"Buccaneers",price:80,venue:"Raymond James Stadium"},
-  {team:"Lightning",price:60,venue:"Amalie Arena"},
-  {team:"Rowdies",price:35,venue:"Al Lang Stadium"},
-  {team:"Buccaneers",price:78,venue:"Raymond James Stadium"},
-  {team:"USF Bulls",price:45,venue:"Raymond James Stadium"},
-  {team:"USF Volleyball",price:22,venue:"Yuengling Center"},
-  {team:"Lightning",price:62,venue:"Amalie Arena"},
-  {team:"Rowdies",price:36,venue:"Al Lang Stadium"},
-  {team:"USF Basketball",price:27,venue:"Yuengling Center"},
-  {team:"Buccaneers",price:82,venue:"Raymond James Stadium"},
-  {team:"Lightning",price:70,venue:"Amalie Arena"},
-  {team:"Rowdies",price:38,venue:"Al Lang Stadium"},
-  {team:"Lightning",price:65,venue:"Amalie Arena"},
-  {team:"USF Football",price:45,venue:"Raymond James Stadium"},
-  {team:"Rowdies",price:40,venue:"Al Lang Stadium"},
-  {team:"Buccaneers",price:90,venue:"Raymond James Stadium"},
-  {team:"Lightning",price:55,venue:"Amalie Arena"}
-];
+    <!-- Bar Chart -->
+    <div class="chart-container">
+      <h3>Average Ticket Price by Team</h3>
+      <canvas id="barChart"></canvas>
+    </div>
 
-// Bar Chart
-const avg={};events.forEach(e=>{avg[e.team]=avg[e.team]||[];avg[e.team].push(e.price);});
-const teams=Object.keys(avg);
-const avgs=teams.map(t=>avg[t].reduce((a,b)=>a+b)/avg[t].length);
-new Chart(barChart,{
-  type:"bar",
-  data:{labels:teams,datasets:[{label:"Avg Price ($)",data:avgs,
-  backgroundColor:["#006747","#b21e1e","#0060d0","#009b3a","#777"]}]},
-  options:{scales:{y:{beginAtZero:true}}}
-});
+    <!-- Pie Chart -->
+    <div class="chart-container">
+      <h3>Event Distribution by Venue</h3>
+      <canvas id="pieChart"></canvas>
+    </div>
 
-// Pie Chart
-const venueCount={};events.forEach(e=>venueCount[e.venue]=(venueCount[e.venue]||0)+1);
-new Chart(pieChart,{
-  type:"pie",
-  data:{labels:Object.keys(venueCount),
-  datasets:[{data:Object.values(venueCount),
-  backgroundColor:["#006747","#b21e1e","#0060d0","#009b3a","#444"]}]}
-});
+    <!-- Line Chart -->
+    <div class="chart-container">
+      <h3>Ticket Prices Over Time</h3>
+      <canvas id="lineChart"></canvas>
+    </div>
+  </main>
 
-// Line Chart
-new Chart(lineChart,{
-  type:"line",
-  data:{
-    labels:events.map((_,i)=>`Event ${i+1}`),
-    datasets:[{data:events.map(e=>e.price),
-    borderColor:"#006747",backgroundColor:"#b2d8c2",tension:.3,fill:false}]
-  },
-  options:{plugins:{legend:{display:false}}}
-});
-</script>
-{% endblock %}
+  <footer class="site-footer">
+    <p>© 2025 🏠 EventXpert • ISM6225 | University of South Florida</p>
+  </footer>
+
+  <script>
+    // Safely pass Python (Flask) data to JavaScript
+    const avgPriceData = JSON.parse(`{{ avg_price_data | tojson | safe }}`);
+    const venueCounts = JSON.parse(`{{ venue_counts | tojson | safe }}`);
+    const datePricePairs = JSON.parse(`{{ date_price_pairs | tojson | safe }}`);
+
+    // --- Bar Chart ---
+    new Chart(document.getElementById('barChart'), {
+      type: 'bar',
+      data: {
+        labels: Object.keys(avgPriceData),
+        datasets: [{
+          label: 'Avg Price ($)',
+          data: Object.values(avgPriceData),
+          backgroundColor: '#006747'
+        }]
+      },
+      options: { scales: { y: { beginAtZero: true } } }
+    });
+
+    // --- Pie Chart ---
+    new Chart(document.getElementById('pieChart'), {
+      type: 'pie',
+      data: {
+        labels: Object.keys(venueCounts),
+        datasets: [{
+          data: Object.values(venueCounts),
+          backgroundColor: ['#006747','#b21e1e','#0060d0','#009b3a','#444']
+        }]
+      }
+    });
+
+    // --- Line Chart ---
+    new Chart(document.getElementById('lineChart'), {
+      type: 'line',
+      data: {
+        labels: datePricePairs.map(d => d[0]),
+        datasets: [{
+          data: datePricePairs.map(d => d[1]),
+          borderColor: '#006747',
+          backgroundColor: '#b2d8c2',
+          tension: 0.3,
+          fill: false
+        }]
+      },
+      options: { plugins: { legend: { display: false } } }
+    });
+  </script>
+</body>
+</html>

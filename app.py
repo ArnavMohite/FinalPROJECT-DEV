@@ -75,12 +75,60 @@ def delete_event(id):
     return redirect(url_for('index'))
 
 # -----------------------------
-# STATIC PAGES
+# DATA VISUALIZATION PAGE (Combined Dataset)
 # -----------------------------
 @app.route('/data')
 def data_page():
-    return render_template('data.html')
+    # --- Base static dataset (Botpress-style defaults) ---
+    base_data = [
+        {"title": "USF Bulls vs UCF Knights", "date": "2025-10-25", "location": "USF Stadium", "price": 30},
+        {"title": "Buccaneers vs Saints", "date": "2025-11-02", "location": "Raymond James Stadium", "price": 80},
+        {"title": "Lightning vs Hurricanes", "date": "2025-11-06", "location": "Amalie Arena", "price": 60},
+        {"title": "Rowdies vs Orlando City", "date": "2025-11-14", "location": "Al Lang Stadium", "price": 35},
+        {"title": "USF Volleyball vs Miami", "date": "2025-11-10", "location": "Yuengling Center", "price": 22},
+        {"title": "USF Basketball vs Florida Gators", "date": "2025-12-05", "location": "Yuengling Center", "price": 35},
+        {"title": "Buccaneers vs Falcons", "date": "2025-11-16", "location": "Raymond James Stadium", "price": 85},
+        {"title": "Lightning vs Panthers", "date": "2025-11-15", "location": "Amalie Arena", "price": 70},
+        {"title": "Rowdies vs Miami FC", "date": "2025-11-25", "location": "Al Lang Stadium", "price": 38},
+        {"title": "USF Soccer vs FIU", "date": "2026-01-08", "location": "Corbett Stadium", "price": 18}
+    ]
 
+    # --- Events from database ---
+    db_events = Event.query.all()
+    db_data = [
+        {"title": e.title, "date": e.date, "location": e.location, "price": e.price}
+        for e in db_events
+    ]
+
+    # --- Combine both datasets ---
+    all_events = base_data + db_data
+
+    # --- Prepare chart data ---
+    avg_price_data = {}
+    venue_counts = {}
+    date_price_pairs = []
+
+    for e in all_events:
+        # average by team
+        avg_price_data[e["title"]] = avg_price_data.get(e["title"], []) + [e["price"]]
+        # venue distribution
+        venue_counts[e["location"]] = venue_counts.get(e["location"], 0) + 1
+        # time-series
+        date_price_pairs.append((e["date"], e["price"]))
+
+    avg_price_data = {k: sum(v) / len(v) for k, v in avg_price_data.items()}
+    date_price_pairs = sorted(date_price_pairs)
+
+    return render_template(
+        "data.html",
+        avg_price_data=avg_price_data,
+        venue_counts=venue_counts,
+        date_price_pairs=date_price_pairs
+    )
+
+# -----------------------------
+# ABOUT PAGE
+# -----------------------------
 @app.route('/about')
 def about():
     return render_template('about.html')
@@ -91,11 +139,8 @@ def about():
 @app.route('/api')
 def api_page():
     """
-    This API view merges default Botpress-style Tampa Bay data
-    with any new events added by the user in Manage Events.
+    Combines Botpress-style Tampa Bay data with new events from the DB.
     """
-
-    # Base default dataset (Botpress-aligned)
     base_data = [
         {"strEvent": "USF Bulls vs UCF Knights", "dateEvent": "2025-10-25", "venue": "USF Stadium, Tampa", "price": "$30"},
         {"strEvent": "Buccaneers vs Saints", "dateEvent": "2025-11-02", "venue": "Raymond James Stadium", "price": "$80"},
@@ -109,7 +154,6 @@ def api_page():
         {"strEvent": "USF Soccer vs FIU", "dateEvent": "2026-01-08", "venue": "Corbett Stadium", "price": "$18"}
     ]
 
-    # Dynamic data from the database
     db_events = Event.query.all()
     db_data = [
         {
@@ -121,9 +165,7 @@ def api_page():
         for e in db_events
     ]
 
-    # Combine default + user-added events
     data = base_data + db_data
-
     return render_template('api.html', data=data)
 
 # -----------------------------
